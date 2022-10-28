@@ -2,8 +2,9 @@
 import random
 import discord
 import settings
+# from discord.utils import get
 
-DISCORD_TOKEN = settings.HENKAKU_BOT_TOKEN   # discord bot token
+DISCORD_TOKEN = settings.HENKAKU_POAP_LINK_BOT_TOKEN   # discord bot token
 GUILD = 1003692205594128414   # Jikkenjo
 VC_CH = 1015300873125113926   # VoiceChannels:12
 OMIKUJI = ["大吉", "中吉", "吉", "小吉", "末吉"]
@@ -51,23 +52,31 @@ async def on_voice_state_update(member, before, after):
 
 @client.event
 async def on_raw_reaction_add(payload):
+    global member_list
     global poap_list
     if payload.channel_id == VC_CH:
         channel = client.get_channel(payload.channel_id)
         message = await channel.fetch_message(payload.message_id)
+        # reaction = get(message.reactions, emoji=payload.emoji.name)
+        # date = datetime.datetime.now()
+        # mes_id = message.author.name
+        # up_id = payload.member.name
+        # print("{},{},{},{}".format(date, mes_id, up_id, reaction))
         if payload.emoji.name == writing_hand:
             attch = list(message.attachments)
             print("attach:", attch)
             if attch == []:
                 print("message:", message)
                 cnt = message.content
+                print("message content:", cnt)
                 poap_list = str(cnt).split("\n")
                 print("poap_list:", poap_list)
             else:
                 f = str(attch[0]).split("/")[-1]  # extract only file name, molstly links.txt
                 print("open:", f)
                 csv = open(f, "r")
-                poap_list = str(list(csv)).replace("[", "").replace("]", "").replace("\n", "").replace("'", "").split(", ")
+                poap_list = list(csv)
+                print("poap_list:", poap_list)
             if len(poap_list) > 0:
                 guild = client.get_guild(GUILD)
                 print("guild:", guild)
