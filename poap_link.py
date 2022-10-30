@@ -9,7 +9,7 @@ GUILD = 1003692205594128414   # Jikkenjo
 VC_CH = 1015300873125113926   # VoiceChannels:12
 OMIKUJI = ["大吉", "中吉", "吉", "小吉", "末吉"]
 writing_hand = "✍️"
-member_list = []
+member_list, poaplist = [], []
 
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
@@ -34,10 +34,11 @@ async def on_voice_state_update(member, before, after):
                     if len(member_list) <= len(poap_list):
                         guild = client.get_guild(GUILD)
                         print("guild:", guild)
-                        for [mem, mem_id], c in zip(member_list, poap_list):
-                            gm = await guild.fetch_member(int(mem_id))
-                            print("gm={}".format(gm))
-                            await gm.send("POAPのリンクです:{}".format(c))
+                        for [m, _], c in zip(member_list, poap_list):
+                            if m == mem:
+                                gm = await guild.fetch_member(int(mem_id))
+                                print("gm={}".format(gm))
+                                await gm.send("POAPのリンクです:{}".format(c))
                     else:
                         ch.send("POAPが売り切れました!{}さんの分がありません!".format(mem))
             else:
